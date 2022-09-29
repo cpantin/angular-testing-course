@@ -23,7 +23,7 @@ describe('CalculatorService', () =>{
             calculator = TestBed.inject(CalculatorService)
     });
 
-    xit('should add two numbers',() =>{
+    it('should add two numbers',() =>{
 
         //Preform the tests
         const result = calculator.add(2,2);
