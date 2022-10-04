@@ -89,8 +89,7 @@ describe('HomeComponent', () => {
   });
 
   // Simulate user interaction w/ DOM
-  //Is supposed to fail in section 3
-  it("should display advanced courses when tab clicked", () => {
+  it("should display advanced courses when tab clicked", fakeAsync(() => {
 
     coursesService.findAllCourses.and.returnValue(of(setupCourses()));
     fixture.detectChanges()
@@ -103,14 +102,48 @@ describe('HomeComponent', () => {
     //Click using function
     click(tabs[1])
 
+    fixture.detectChanges();
 
-    const cardTitles = debugElement.queryAll(By.css('.mat-card-title'));
+    //ensures that async operations are executed
+    flush();
 
-    expect(cardTitles.length).toBeGreaterThanOrEqual(0,"Could not find card titles");
+    const cardTitles = debugElement.queryAll(By.css('.mat-tab-body-active .mat-card-title'));
+
+    expect(cardTitles.length).toBeGreaterThan(0,"Could not find card titles");
 
     expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
 
-  });
+  }));
+
+  //async allows for actual http calls
+  it("should display advanced courses when tab clicked", waitForAsync(() => {
+
+    coursesService.findAllCourses.and.returnValue(of(setupCourses()));
+    fixture.detectChanges()
+    
+    const tabs = debugElement.queryAll(By.css(".mat-tab-label"));
+
+    //Click using debug element
+    //debugElement.nativeElement.click();
+
+    //Click using function
+    click(tabs[1])
+
+    fixture.detectChanges();
+
+   fixture.whenStable().then(()=>{
+    const cardTitles = debugElement.queryAll(By.css('.mat-tab-body-active .mat-card-title'));
+
+    expect(cardTitles.length).toBeGreaterThan(0,"Could not find card titles");
+
+    expect(cardTitles[0].nativeElement.textContent).toContain("Angular Security Course");
+   });
+    
+
+
+
+  }));
+
 
 });
 
